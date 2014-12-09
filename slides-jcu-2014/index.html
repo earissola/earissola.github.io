@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>JCU - Indexación Eficiente de Flujos de Tweets</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+			<!-- Introducción -->
+				<section>
+					<h1>Indexación Eficiente de Flujos de Tweets</h1>
+					<hr>
+					<br />
+					<p>Trabajo Final de Licenciatura</p>
+					<p>Licenciatura en Sistemas de Información</p>
+					<p>@earissola - Esteban A. Ríssola</p>
+					<p>Director: Mg. Gabriel H. Tolosa</p>
+					<p>JCU - UNLu (2014)</p>
+				</section>
+			<!-- Microblogging -->
+				<section>
+				<!-- Definición -->
+					<section>
+						<h2>Microblogging</h2>
+						<blockquote>
+							<p>A form of blogging that lets you write brief text updates (usually less than 200 characters) about your life on the go and send them to friends and interested observers via text messaging, instant messaging (IM), email or the web</p>
+						</blockquote>
+						<small>Akshay Java, Xiaodan Song, Tim Finin, and Belle Tseng. <i>Why we twitter: understanding microblogging usage and communities</i>. WebKDD/SNA-KDD '07. ACM. 2007.</small>
+						<hr />
+						<h3>¿Alguno suena conocido?</h3>
+						<ul>
+							<li>Twitter (2006)</li>
+							<li>Jaiku (2006-2011)</li>
+							<li>Pownce (2007-2008)</li>
+						</ul>
+						<aside class="notes">
+							Jaiku: Jaiku fue fundado en Febrero de 2006. En su comienzo sólo para Finlandia. 10 de octubre de 2007 Google adquirió Jaiku. 17 de octubre de 2011 Google cerró Jaiku
+						</aside>
+					</section>
+				<!-- Twitter -->
+					<section>
+						<h2>El caso paradigmático: Twitter</h2>
+
+						<ul>
+							<li><strong>6.000</strong> Tweets/Segundo</li>
+							<li><strong>350.000</strong> Tweets/Minuto</li>
+							<li><strong>500.000.000</strong> Tweets/Día</li>
+							<li><strong>200.000.000.000.</strong> Tweets/Año</li>
+						</ul>
+						<br /> <br />
+						<h3>¿Twittear o no Twittear...? He ahí la cuestión</h3>
+						<small>Estadísticas extraídas de: <i>http://www.internetlivestats.com/twitter-statistics</i></small>
+					</section>
+				</section>
+
+				<!-- Búsqueda en Tiempo Real -->
+				<section>
+					<section>
+					<h2>Búsqueda en Tiempo Real</h2>
+					<h3>Principales Requerimientos</h3>
+					<ul>
+						<li>Procesamiento de consultas de baja latencia y alto <i>throughtput</i></li>
+						<li>Alta tasa de ingestión y disponibilidad inmediata</li>
+						<li>Lecturas y escrituras concurrentes</li>
+						<li>Predominio del factor temporal</li>
+					</ul>
+					<hr>
+					<h3>Índice Invertido y Búsqueda</h3>
+					<ul>
+						<li>Vocabulario y Listas de Posteo se mantienen en memoria</li>
+						<li>Listas de Posteo:</li>
+							<ul>
+								<li>Organizadas cronológicamente hacía adelante (Más recientes últimas)</li>
+								<li>Se recorren hacía atrás (Más recientes primero)</li>
+							</ul>
+					</ul>
+					<!-- Tanto el vocabulario, como las listas de posteo se mantienen en memoria (Diferencia de índice traidicional)
+					Las listas de posteo se mantienen en orden cronológico hacía adelante (Más recientes últimas)
+					Se recorren hacía atrás (más recientes primero)
+					LIFO () -->
+					</section>
+					<section>
+						<h3>Indíce Invertido - Estructura de Datos para RI</h3>
+						<p>Para cada término <i>t</i> se mantiene una lista de todos los documentos que contienen a <i>t</i>.</p>
+						<p>Junto a cada documento es posible almacenar frecuencia del término en el documento en cuestión, posición en el texto, entre otros.</p>
+						<p>Listas de Posteo ordenadas por identificador unívoco de cada documento (<strong>docID</strong>)</p>
+						<img src="indice-invertido.png" > 
+					</section>
+				</section>
+				<section>
+					<h2>Tweets2011</h2>
+					<p>Colección de Tweets proporcionados por el NIST (National Institute of Standards and Technology )</p>
+					<p>Conformada por apoximadamente 16 millones de Tweets</p>
+					<p>Período de la Muestra: 23/01 - 08/02 de 2011 - 17 Días</p>
+					<p>Descargados con éxito: 11.601.066 Tweets</p>
+					<small>Richard McCreadie, Ian Soboroff, Jimmy Lin, Craig Macdonald, Iadh Ounis, and Dean McCullough. 2012. <i>On building a reusable Twitter corpus</i>. (SIGIR '12). ACM. 2012 </small>
+				</section>
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
