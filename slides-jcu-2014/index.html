@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>JCU - Indexación Eficiente de Flujos de Tweets</title>
+		<title>JCU :: 2014 - Indexación Eficiente de Flujos de Tweets</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -44,10 +44,12 @@
 			<div class="slides">
 			<!-- Introducción -->
 				<section>
-					<h1>Indexación Eficiente de Flujos de Tweets</h1>
+					<h2>Indexación Eficiente de Flujos de Tweets</h2>
+					<img src="share/img/twitter-logo.png" width="15%" alt="Twitter Logo" style="background: none repeat scroll 0 0 rgba(0, 0, 0, 0);border:none;box-shadow: none;" :"none">
+					<br />
 					<hr>
 					<br />
-					<p>Trabajo Final de Licenciatura</p>
+					<p>Trabajo Final en Curso</p>
 					<p>Licenciatura en Sistemas de Información</p>
 					<p>@earissola - Esteban A. Ríssola</p>
 					<p>Director: Mg. Gabriel H. Tolosa</p>
@@ -65,18 +67,17 @@
 						<hr />
 						<h3>¿Alguno suena conocido?</h3>
 						<ul>
-							<li>Twitter (2006)</li>
-							<li>Jaiku (2006-2011)</li>
-							<li>Pownce (2007-2008)</li>
+							<li><a href="http://twitter.com/">Twitter</a> (2006)</li>
+							<li><a href="http://en.wikipedia.org/wiki/Jaiku">Jaiku</a> (2006-2011)</li>
+							<li><a href="http://en.wikipedia.org/wiki/Pownce">Pownce</a> (2007-2008)</li>
 						</ul>
 						<aside class="notes">
-							Jaiku: Jaiku fue fundado en Febrero de 2006. En su comienzo sólo para Finlandia. 10 de octubre de 2007 Google adquirió Jaiku. 17 de octubre de 2011 Google cerró Jaiku
+							Jaiku: Jaiku fue fundado en Febrero de 2006. En su comienzo, sólo disponible en Finlandia. El 10 de Octubre de 2007 Google lo adquirió. El 17 de octubre de 2011 Google decidió cerrarlo.
 						</aside>
 					</section>
 				<!-- Twitter -->
 					<section>
 						<h2>El caso paradigmático: Twitter</h2>
-
 						<ul>
 							<li><strong>6.000</strong> Tweets/Segundo</li>
 							<li><strong>350.000</strong> Tweets/Minuto</li>
@@ -85,12 +86,13 @@
 						</ul>
 						<br /> <br />
 						<h3>¿Twittear o no Twittear...? He ahí la cuestión</h3>
-						<small>Estadísticas extraídas de: <i>http://www.internetlivestats.com/twitter-statistics</i></small>
+						<small>Estadísticas extraídas de: <a href="http://www.internetlivestats.com/twitter-statistics"><i>http://www.internetlivestats.com/twitter-statistics</i></a></small>
 					</section>
 				</section>
 
 				<!-- Búsqueda en Tiempo Real -->
 				<section>
+					<!-- Requerimientos -->
 					<section>
 					<h2>Búsqueda en Tiempo Real</h2>
 					<h3>Principales Requerimientos</h3>
@@ -100,14 +102,26 @@
 						<li>Lecturas y escrituras concurrentes</li>
 						<li>Predominio del factor temporal</li>
 					</ul>
+					<aside class="notes">
+						<ol>
+							<li>+ Consultas en - menos tiempo</li>
+							<li>Documentos disponibles en segundos</li>
+							<li>Estructuras del índice accedidas/escritas concurrentemente</li>
+							<li>Marca de tiempo de un documento</li>
+						</ol>
+					</aside>
+					<!-- 1. Resolver (ó evaluar) la mayor cantidad de consultas posibles, incurriendo en el menor tiempo admisible para ello</
+					2. Los usuarios esperan que el contenido se encuentre disponible ("searchable") dentro de un período reducido de tiempo. En el orden de unos pocos segundos. El indexador debe alcanzar tanto baja latencia como alto throughput. A diferencia de RI clásico, donde dicho proceso se considera una operación por lotes ("batch"). En tales casos se admite que el contenido se halle disponible en minutos, horas o incluso días 
+					3. Las estructuras del índice actualizarse continuamente en la medida en que ingresan nuevos documentos, al mismo tiempo que tales estructuras son accedidas para resolver las consultas entrantes.
+					4. La marca de tiempo de un documento ("timestamp") es una de las claves más importantes para ordenar los resultados, más allá de otras medidas de relevancia empleadas para mejorar el ranking. Contrariamente a lo que sucede en la búsqueda web, donde la marca de tiempo de una página web posee un rol relativamente menor en la relvancia que aportará a la lista final de resultados.-->
 					<hr>
 					<h3>Índice Invertido y Búsqueda</h3>
 					<ul>
-						<li>Vocabulario y Listas de Posteo se mantienen en memoria</li>
+						<li>Vocabulario y Listas de Posteo en memoria</li>
 						<li>Listas de Posteo:</li>
-							<ul>
-								<li>Organizadas cronológicamente hacía adelante (Más recientes últimas)</li>
-								<li>Se recorren hacía atrás (Más recientes primero)</li>
+							<ul style="list-style-type:none">
+								<li> - Organizadas cronológicamente hacía adelante (Más recientes últimas)</li>
+								<li> - Se recorren hacía atrás (Más recientes primero)</li>
 							</ul>
 					</ul>
 					<!-- Tanto el vocabulario, como las listas de posteo se mantienen en memoria (Diferencia de índice traidicional)
@@ -115,26 +129,141 @@
 					Se recorren hacía atrás (más recientes primero)
 					LIFO () -->
 					</section>
+					<!-- Índice Invertido RI -->
 					<section>
 						<h3>Indíce Invertido - Estructura de Datos para RI</h3>
-						<p>Para cada término <i>t</i> se mantiene una lista de todos los documentos que contienen a <i>t</i>.</p>
-						<p>Junto a cada documento es posible almacenar frecuencia del término en el documento en cuestión, posición en el texto, entre otros.</p>
-						<p>Listas de Posteo ordenadas por identificador unívoco de cada documento (<strong>docID</strong>)</p>
-						<img src="indice-invertido.png" > 
+						<ul>
+							<li>Para cada término <i><strong>t</strong></i> se mantiene una lista de todos los documentos que lo contienen</li>
+							<li>Listas de Posteo ordenadas por un número que identifica cada documento univocamente en la colección (<strong>docID</strong>)</li>
+							<li>Complementariamente es posible almacenar la frecuencia del término en el documento en cuestión, posición en el texto, entre otros</li>
+						</ul>
+						<hr />
+						<img src="share/img/indice-invertido.png" alt="Indice Invertido">
+						<br />
+						<small>Fuente: C. D. Manning, P. Raghavan, y H. Schütze. <i>Introduction to Information Retrieval</i>. Cambridge University Press. 2008.</small>
 					</section>
 				</section>
+				<!-- Corpus y Vocabulario -->
 				<section>
-					<h2>Tweets2011</h2>
-					<p>Colección de Tweets proporcionados por el NIST (National Institute of Standards and Technology )</p>
-					<p>Conformada por apoximadamente 16 millones de Tweets</p>
-					<p>Período de la Muestra: 23/01 - 08/02 de 2011 - 17 Días</p>
-					<p>Descargados con éxito: 11.601.066 Tweets</p>
-					<small>Richard McCreadie, Ian Soboroff, Jimmy Lin, Craig Macdonald, Iadh Ounis, and Dean McCullough. 2012. <i>On building a reusable Twitter corpus</i>. (SIGIR '12). ACM. 2012 </small>
+					<!-- Colección Tweets2011 -->
+					<section>
+						<h2>Tweets2011 - TREC Microblog Dataset</h2>
+						<p>16 millones de Tweets</p>
+						<p>Período de la Muestra: 23/01 - 08/02 de 2011</p>
+						<p>Descargados con éxito: 11.601.066 Tweets</p>
+						<!-- <small>Richard McCreadie, Ian Soboroff, Jimmy Lin, Craig Macdonald, Iadh Ounis, and Dean McCullough. 2012. <i>On building a reusable Twitter corpus</i>. (SIGIR '12). ACM. 2012 </small> -->
+						<hr \>
+						<h3>Estadísticas Recolectadas</h3>
+						<ul>
+							<li>#Hashtags: 35.736</li>
+							<li>@Menciones: 216.495</li>
+							<li>Términos: 224.922</li>
+							<br />
+							<li>Promedio de #Hashtags por Tweet: 1,38</li>
+							<li>Promedio de @Menciones por Tweet: 1,21</li>
+						</ul>
+						<!-- <p>Aceptados: 3.815.681</p> -->
+					</section>
+				<!-- Crecimiento Vocabulario: RI -->
+					<section>
+						<h2>Crecimiento del Vocabulario en RI</h2>
+						<h3>Ley de Heaps</h3>
+						<img width="70%" src="share/img/quijote-heaps.png" alt="Quijote Heaps">
+						<aside class="notes">
+						<ul>
+							<li>Palabras Procesadas: 354.907 - Términos Únicos: 23.681</li>
+							<li>Permite estimar el tamaño del vocabulario con lo cual es posible estimar, la escalabilidad de las estructuras de datos necesarias para almacenar los índices que soportan el SRI</li>
+						</ul>
+						</aside>
+						<!-- Ley empírica que describe el comportamiento de los términos dentro de un texto. La Ley de Heaps establece la relación entre el tamaño del texto (Cantidad de palabras) y el crecimiento de vocabulario (Cantidad de de palabras únicas). En particular postula que el tamaño del vocabulario (y su crecimiento) es una función del tamaño del texto. V = K * N^beta
+						Donde:
+    						* N: Es el tamaño del documento (Cantidad de Palabras)
+    						* K: Constante que depende del texto
+    						* beta: Constante que depende del texto
+    					En la medida en que se incorporan documentos a una colección, en cada instancia se encontrarán nuevos términos para el vocabulario
+    					Utilidad: Permite estimar el tamaño del vocabulario con lo cual es posible estimar, la escalabilidad de las estructuras de datos necesarias para almacenar los índices que soportan el SRI. Este hecho resulta realmente útil si se utilizará una tabla hash en memoria para el índice. -->
+					</section>
+				<!-- Crecimiento Vocabulario: Twitter -->
+					<section>
+						<h3>Pero en Twitter...</h3>
+						<img width="70%" src="share/img/vocabulario-twitter.png" alt="Twitter Vocabulario">
+						<aside class="notes">
+							Palabras Procesadas: 49.919.656 - Términos Únicos: 2.459.457
+						</aside>
+					</section>
+					<section>
+						<h3>El vocabulario total no se estabiliza, entonces ¿podemos almacenar todos los <i>tokens</i> en el índice invertido observando como crecen?</h3>
+					</section>
+					<section>
+						<h3>La respuesta es NO<br>Debemos encontrar alguna manera de <i>podar</i> el vocabulario, sin dañar la efectividad general del sistema</h3>
+					</section>
 				</section>
+				<!-- Nuestra Propuesta-->
+				<section>
+					<section>
+						<h2>Nuestra Propuesta</h2>
+						<p>Analizar el vocabulario obtenido con el fin de reconocer la dinámica que lo caracteriza y así, identificar aquellos tokens que pueden ser <i>podados</i> del índice invertido</p>
+						<hr />
+						<p>Esto permite disminuir el tamaño del índice, e incluso mentenerlo constante en el tiempo, hecho que admite mentenerlo en memoria</p>
+						<hr />
+						<p>Sin embargo, para ello es necesario encontrar un <i>compromiso</i> entre la agresividad de la poda y la efectividad</p>
+					</section>
+					<section>
+						<h3>Tres formas de caracterizar los tokens</h3>
+						<ul>
+							<li>Estables</li>
+							<li>Volátiles (ó Esporádicos)</li>
+							<li>Singulares</li>
+						</ul>
+						<aside class="notes">
+							Matriz de Términos - Método de Ventana de 7 días
+						</aside>
 
-
+					</section>
+					<section>
+						<h3>¿Qué observamos?</h3>
+						<p>El vocabulario total no se estabiliza tanto para los tokens <i>volátiles</i> como para los <i>singulares</i></p>
+						<br />
+						<h3>¿Cómo identificar cada uno?</h3>
+					</section>
+					<section>
+						<h3>Analizando la frecuencia de los tokens...</h3>
+						<!-- <img src="share/img/analisis-fr.jpg" alt="Análisis Frecuencia"> -->
+						<!-- <img src="share/img/analisis-fr.jpeg" alt="Análisis Frecuencia"> -->
+						<!-- <img src="share/img/analisis-fr.eps" alt="Análisis Frecuencia"> -->
+						<img src="share/img/analisis-fr.png" alt="Análisis Frecuencia">
+					</section>
+					<section>
+						<h2> ¿Qué conceptos e ideas podemos aprovechar?</h2>
+						<p>Poda Estática del Índice Invertido</p>
+						<ul>
+							<li>Term-Base Pruning</li>
+						</ul>
+						<hr />
+						<p>Poda Dinámica (Procesamiento <i>optimizado</i> de los Top-K)</p>
+						<ul>
+							<li>WAND</li>
+						</ul>
+						<hr />
+						<p>Caché para Motores de Búsqueda</p>
+						<ul>
+							<li>CIP </li>
+						</ul>
+					</section>
+				</section>
+				<!-- Preguntas -->
+				<section>
+					<section>
+						<h2>¿Preguntas?</h2>
+					</section>
+					<section>
+						<h3>#Gracias</h3>
+						<img src="share/img/unlu-logo.png" width="40%" alt="UNLu Logo" style="background: none repeat scroll 0 0 rgba(0, 0, 0, 0);border:none;box-shadow: none;" :"none">
+						<br />
+						<h3>@JCU2014</h3>
+					</section>
+				</section>
 			</div>
-
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
